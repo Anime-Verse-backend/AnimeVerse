@@ -1,7 +1,7 @@
-diff --git a/node_modules/ansi-color-esm/lib/ansi-color.js b/node_modules/ansi-color-esm/lib/ansi-color.js
-index 9226533..e2b5e54 100644
---- a/node_modules/ansi-color-esm/lib/ansi-color.js
-+++ b/node_modules/ansi-color-esm/lib/ansi-color.js
+diff --git a/node_modules/ansi-color/lib/ansi-color.js b/node_modules/ansi-color/lib/ansi-color.js
+index 79155e7..73c4d7f 100644
+--- a/node_modules/ansi-color/lib/ansi-color.js
++++ b/node_modules/ansi-color/lib/ansi-color.js
 @@ -32,10 +32,10 @@
    var color_attrs = color.split("+");
    var ansi_str = "";

@@ -62,8 +62,5 @@
     "postcss": "^8",
     "tailwindcss": "^3.3.0",
     "typescript": "^5"
-  },
-  "overrides": {
-    "ansi-color": "npm:ansi-color-esm@^0.2.1-1"
   }
 }
