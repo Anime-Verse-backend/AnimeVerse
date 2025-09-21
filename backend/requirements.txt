@@ -1,0 +1,12 @@
+Flask
+Flask-SQLAlchemy
+PyMySQL
+Flask-Marshmallow
+marshmallow-sqlalchemy
+passlib==1.7.4
+PyJWT
+Flask-Cors
+python-dotenv
+resend
+cryptography
+bcrypt==3.2.2
