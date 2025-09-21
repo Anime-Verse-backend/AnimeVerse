@@ -94,6 +94,8 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = engine_options
 app.config['JWT_SECRET_KEY'] = JWT_SECRET_KEY
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=1)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+# Set max content length for file uploads (e.g., 16MB)
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 # --- Database Auto-Creation ---
 def ensure_database_exists():
@@ -855,18 +857,22 @@ def delete_user(user_id, current_user):
 @app.route("/api/users/me/avatar", methods=['POST'])
 @token_required
 def upload_avatar(current_user):
-    data = request.get_json()
+    data = request.form
     if 'avatarBase64' not in data:
         return jsonify({"message": "No se encontró la imagen"}), 400
     
     current_user.avatar_url = data['avatarBase64']
     try:
         db_session.commit()
-        return jsonify({"avatarUrl": data['avatarBase64']})
+        # Return the new URL (which could be the same data URI)
+        # using the same schema method to ensure consistency
+        user_dump = user_schema.dump(current_user)
+        return jsonify({"avatarUrl": user_dump['avatarUrl']})
     except Exception as e:
         db_session.rollback()
         app.logger.error(f"Error updating avatar: {e}")
         return jsonify({"message": "Error interno al actualizar el avatar"}), 500
+
 
 # --- File Upload Helper ---
 def save_file(file, subfolder=''):
@@ -1809,3 +1815,5 @@ initialize_app(app)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=True)
+
+    
