@@ -17,6 +17,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { ContinueWatching } from '@/components/continue-watching';
+import { slugify } from '@/lib/utils';
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
@@ -136,8 +137,7 @@ export default function DashboardPage() {
                             <SelectTrigger id="genre-filter"><SelectValue /></SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="all">Todos los Géneros</SelectItem>
-                                {genres.map(g => <SelectItem key={g.id} value={g.name}>{g.name}</SelectItem>)}
-                            </SelectContent>
+                                {genres.map(g => <SelectItem key={g.id} value={g.name}>{g.name}</SelectItem>)}                            </SelectContent>
                         </Select>
                     </div>
                      <div className="space-y-2">
@@ -201,15 +201,14 @@ export default function DashboardPage() {
                   <CarouselContent>
                     {featuredAnimes.map((anime) => (
                        <CarouselItem key={anime.id} className="basis-11/12 md:basis-1/2 lg:basis-1/3">
-                          <Link href={`/anime/${anime.id}`} className="block group">
+                          <Link href={`/anime/${anime.id}/${slugify(anime.title)}`} className="block group">
                             <div className="relative aspect-video w-full rounded-lg overflow-hidden">
                               <Image src={anime.imageUrl} alt={anime.title} fill className="object-cover transition-transform duration-300 group-hover:scale-105" data-ai-hint="anime action" />
                               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                               <div className="absolute bottom-0 left-0 p-4">
                                 <h3 className="text-xl font-bold text-white font-headline">{anime.title}</h3>
                                 <div className="flex flex-wrap gap-2 mt-1">
-                                  {(anime.genres || []).slice(0, 2).map((g) => (<Badge key={g.id} variant="secondary" className="text-xs backdrop-blur-sm bg-black/20 text-white border-white/20">{g.name}</Badge>))}
-                                </div>
+                                  {(anime.genres || []).slice(0, 2).map((g) => (<Badge key={g.id} variant="secondary" className="text-xs backdrop-blur-sm bg-black/20 text-white border-white/20">{g.name}</Badge>))}                                </div>
                               </div>
                               <div className="absolute top-2 right-2 flex items-center gap-1 text-yellow-400 bg-black/30 backdrop-blur-sm px-2 py-1 rounded-full">
                                   <Star className="h-4 w-4 fill-current" />
