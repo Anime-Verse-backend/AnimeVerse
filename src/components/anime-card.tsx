@@ -13,7 +13,7 @@ interface AnimeCardProps {
 
 export function AnimeCard({ anime }: AnimeCardProps) {
   return (
-    <Link href={`/anime/${anime.id}-${anime.title.toLowerCase().replace(/ /g, '-')}`} className="block h-full group">
+    <Link href={`/anime/${anime.id}`} className="block h-full group">
       <Card className="h-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 animate-slide-up opacity-0 [--delay:50ms] [animation-fill-mode:forwards] [animation-delay:var(--delay)]">
         <CardHeader className="p-0 overflow-hidden">
           <Image

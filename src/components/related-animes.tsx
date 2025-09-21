@@ -95,7 +95,7 @@ export function RelatedAnimes({ anime }: RelatedAnimesProps) {
       <CardContent>
         <div className="space-y-4">
           {relatedAnimes.map(related => (
-            <Link href={`/anime/${related.id}-${related.title.toLowerCase().replace(/ /g, '-')}`} key={related.id} className="block group">
+            <Link href={`/anime/${related.id}`} key={related.id} className="block group">
               <div className="flex items-start gap-4 p-2 -m-2 rounded-lg hover:bg-muted/50 transition-colors">
                  <Image
                     src={related.imageUrl}

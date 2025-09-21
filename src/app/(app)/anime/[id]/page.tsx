@@ -34,7 +34,7 @@ const getYouTubeEmbedUrl = (url?: string): string | null => {
 
 export default function AnimeDetailPage() {
   const params = useParams();
-  const animeId = typeof params.id === 'string' ? params.id.split('-')[0] : '';
+  const animeId = typeof params.id === 'string' ? params.id : '';
   
   const [anime, setAnime] = useState<Anime | null>(null);
   const [loading, setLoading] = useState(true);
@@ -164,12 +164,10 @@ export default function AnimeDetailPage() {
                                     </ul>
                                 </AccordionContent>
                             </AccordionItem>
-                        ))}
-                    </Accordion>
+                        ))}\n                    </Accordion>
                 ) : (
                     <p className="text-muted-foreground text-center py-4">La lista de episodios no está disponible aún.</p>
-                )}
-            </CardContent>
+                )}\n            </CardContent>
           </Card>
 
           <CommentSection initialComments={anime.comments || []} animeId={anime.id} />
