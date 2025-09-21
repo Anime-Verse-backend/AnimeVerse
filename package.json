@@ -5,8 +5,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:backend": "python backend/app.py",
     "build": "next build",
     "start": "next start",
+    "start:backend": "gunicorn --bind 0.0.0.0:8000 backend.app:app",
     "lint": "next lint"
   },
   "dependencies": {
