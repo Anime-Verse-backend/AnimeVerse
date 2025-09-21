@@ -536,6 +536,10 @@ def owner_co_owner_token_required(f):
     return decorated
 
 # --- 6. API Routes ---
+@app.route('/')
+def health_check():
+    return jsonify({"status": "ok", "message": "AnimeVerse backend is healthy."}), 200
+
 @app.route('/uploads/<path:filename>')
 def serve_upload(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
@@ -1803,3 +1807,5 @@ initialize_app(app)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=True)
+
+    
