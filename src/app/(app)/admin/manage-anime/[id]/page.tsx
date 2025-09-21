@@ -70,6 +70,7 @@ export default function EditAnimePage() {
 
   const [isEpisodeDialogOpen, setIsEpisodeDialogOpen] = useState(false);
   const [editingEpisode, setEditingEpisode] = useState<Episode | null>(null);
+  const [currentSeasonId, setCurrentSeasonId] = useState<string | null>(null);
 
 
   const form = useForm<FormData>({
@@ -185,7 +186,7 @@ export default function EditAnimePage() {
   
   const openEpisodeDialog = (seasonId: string, episode: Episode | null = null) => {
     setEditingEpisode(episode);
-    // You might want to pass seasonId to the dialog if it's needed for creating a new episode
+    setCurrentSeasonId(seasonId);
     setIsEpisodeDialogOpen(true);
   }
 
@@ -224,8 +225,7 @@ export default function EditAnimePage() {
         ));
         toast({ title: "Success", description: "Episode updated successfully." });
       } else { // Create new
-        // Assuming you pass the seasonId to the dialog, or have it available here
-        const seasonId = episodeData.seasonId; // Make sure this is passed correctly
+        const seasonId = currentSeasonId; // Use the stored seasonId
         if(!seasonId) throw new Error("Season ID is missing to add a new episode.");
         savedEpisode = await api.addEpisode(animeId, seasonId, episodeData as Omit<Episode, 'id' | 'seasonId' | 'comments'>);
         setSeasons(prevSeasons => prevSeasons.map(season => 
@@ -237,6 +237,7 @@ export default function EditAnimePage() {
       }
       setIsEpisodeDialogOpen(false);
       setEditingEpisode(null);
+      setCurrentSeasonId(null);
     } catch (error: any) {
         toast({ variant: 'destructive', title: "Error", description: `Failed to save episode: ${error.message}` });
     }
@@ -430,10 +431,10 @@ export default function EditAnimePage() {
         isOpen={isEpisodeDialogOpen}
         onOpenChange={setIsEpisodeDialogOpen}
         episode={editingEpisode}
+        seasonId={currentSeasonId}
         onSave={handleEpisodeSave}
       />}
 
     </div>
   );
 }
-

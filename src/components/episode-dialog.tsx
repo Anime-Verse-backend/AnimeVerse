@@ -46,9 +46,10 @@ interface EpisodeDialogProps {
   onOpenChange: (open: boolean) => void;
   onSave: (episode: Partial<Omit<Episode, 'id'>>) => Promise<void>;
   episode: Episode | null;
+  seasonId: string | null;
 }
 
-export function EpisodeDialog({ isOpen, onOpenChange, onSave, episode }: EpisodeDialogProps) {
+export function EpisodeDialog({ isOpen, onOpenChange, onSave, episode, seasonId }: EpisodeDialogProps) {
   const form = useForm<FormData>({
     resolver: zodResolver(FormSchema),
   });
@@ -67,19 +68,20 @@ export function EpisodeDialog({ isOpen, onOpenChange, onSave, episode }: Episode
                 title: episode.title,
                 duration: episode.duration,
                 synopsis: episode.synopsis || '',
-                sources: episode.sources.map(s => ({ server: s.server, url: s.url, language: s.language })),                seasonId: episode.seasonId,
+                sources: episode.sources.map(s => ({ server: s.server, url: s.url, language: s.language })),
+                seasonId: episode.seasonId,
             });
         } else {
-             // Logic to get the current season ID would be passed in props for new episodes
             form.reset({
                 title: '',
                 duration: 0,
                 synopsis: '',
                 sources: [{ server: '', language: 'Subtitled', url: '' }],
+                seasonId: seasonId || undefined
             });
         }
     }
-  }, [episode, isOpen, form]);
+  }, [episode, isOpen, form, seasonId]);
 
   const handleSubmit = async (data: FormData) => {
     setIsSaving(true);
