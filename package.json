@@ -8,7 +8,7 @@
     "dev:backend": "python backend/app.py",
     "build": "next build",
     "start": "next start",
-    "start:backend": "gunicorn --bind 0.0.0.0:8000 backend.app:app",
+    "start:backend": "gunicorn --chdir backend --bind 0.0.0.0:8000 app:app",
     "lint": "next lint",
     "postinstall": "patch-package"
   },
@@ -40,6 +40,7 @@
     "lucide-react": "^0.323.0",
     "next": "14.1.0",
     "next-themes": "^0.3.0",
+    "patch-package": "^8.0.0",
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.50.1",
@@ -58,7 +59,6 @@
     "dotenv": "^16.4.5",
     "eslint": "^8",
     "eslint-config-next": "14.1.0",
-    "patch-package": "^8.0.0",
     "postcss": "^8",
     "tailwindcss": "^3.3.0",
     "typescript": "^5"
