@@ -906,6 +906,8 @@ def get_animes():
 
     if search:
         search_term = f"%{search}%"
+        # Prioritize results that start with the search term
+        query = query.order_by(func.lower(Anime.title).like(f"{search.lower()}%").desc())
         query = query.filter(Anime.title.ilike(search_term))
     if genre:
         query = query.join(Anime.genres).filter(Genre.name == genre)
@@ -918,9 +920,9 @@ def get_animes():
 
     # Sorting
     sort_by = request.args.get('sort_by', 'rating_desc')
-    if sort_by == 'rating_desc':
+    if sort_by == 'rating_desc' and not search: # Only sort by rating if not searching
         query = query.order_by(Anime.rating.desc())
-    elif sort_by == 'title_asc':
+    elif sort_by == 'title_asc' and not search:
         query = query.order_by(Anime.title.asc())
     
     animes = query.all()
@@ -1807,5 +1809,3 @@ initialize_app(app)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=True)
-
-    
