@@ -62,6 +62,6 @@
     "typescript": "^5"
   },
   "overrides": {
-    "ansi-color": "^0.2.1-1"
+    "ansi-color": "npm:ansi-color-esm@^0.2.1-1"
   }
 }
