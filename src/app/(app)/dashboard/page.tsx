@@ -17,7 +17,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { ContinueWatching } from '@/components/continue-watching';
-import { slugify } from '@/lib/utils';
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
@@ -201,7 +200,7 @@ export default function DashboardPage() {
                   <CarouselContent>
                     {featuredAnimes.map((anime) => (
                        <CarouselItem key={anime.id} className="basis-11/12 md:basis-1/2 lg:basis-1/3">
-                          <Link href={`/anime/${anime.id}/${slugify(anime.title)}`} className="block group">
+                          <Link href={`/anime/${anime.id}`} className="block group">
                             <div className="relative aspect-video w-full rounded-lg overflow-hidden">
                               <Image src={anime.imageUrl} alt={anime.title} fill className="object-cover transition-transform duration-300 group-hover:scale-105" data-ai-hint="anime action" />
                               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />

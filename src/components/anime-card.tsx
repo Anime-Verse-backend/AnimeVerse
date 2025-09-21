@@ -6,16 +6,14 @@ import { Badge } from "@/components/ui/badge"
 import Image from "next/image"
 import Link from "next/link"
 import { Star } from "lucide-react"
-import { slugify } from "@/lib/utils"
 
 interface AnimeCardProps {
   anime: Anime
 }
 
 export function AnimeCard({ anime }: AnimeCardProps) {
-  const animeUrl = `/anime/${anime.id}/${slugify(anime.title)}`;
   return (
-    <Link href={animeUrl} className="block h-full group">
+    <Link href={`/anime/${anime.id}`} className="block h-full group">
       <Card className="h-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 animate-slide-up opacity-0 [--delay:50ms] [animation-fill-mode:forwards] [animation-delay:var(--delay)]">
         <CardHeader className="p-0 overflow-hidden">
           <Image
