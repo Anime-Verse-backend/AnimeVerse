@@ -39,7 +39,13 @@ const nextConfig = {
         hostname: '*.onrender.com',
         port: '',
         pathname: '/uploads/**',
-      }
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.pinimg.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
 };
