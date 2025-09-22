@@ -213,7 +213,7 @@ export default function EditAnimePage() {
     }
   };
 
-  const handleEpisodeSave = async (episodeData: Partial<Omit<Episode, 'id' | 'seasonId'>>) => {
+  const handleEpisodeSave = async (episodeData: Partial<Omit<Episode, 'id'>>) => {
     try {
       let savedEpisode: Episode;
       if (editingEpisode) { // Update existing
@@ -225,9 +225,16 @@ export default function EditAnimePage() {
         ));
         toast({ title: "Success", description: "Episode updated successfully." });
       } else { // Create new
-        const seasonId = currentSeasonId; // Use the stored seasonId
-        if(!seasonId) throw new Error("Season ID is missing to add a new episode.");
-        savedEpisode = await api.addEpisode(animeId, seasonId, episodeData as Omit<Episode, 'id' | 'seasonId' | 'comments'>);
+        const seasonIdForNewEpisode = currentSeasonId;
+        if(!seasonIdForNewEpisode) throw new Error("Season ID is missing to add a new episode.");
+        
+        // The episodeData from the form already contains the seasonId if we pass it
+        const finalEpisodeData = {
+          ...episodeData,
+          seasonId: seasonIdForNewEpisode,
+        }
+
+        savedEpisode = await api.addEpisode(animeId, seasonIdForNewEpisode, finalEpisodeData as Omit<Episode, 'id' | 'comments'>);
         setSeasons(prevSeasons => prevSeasons.map(season => 
             season.id === savedEpisode.seasonId 
             ? { ...season, episodes: [...season.episodes, savedEpisode] }

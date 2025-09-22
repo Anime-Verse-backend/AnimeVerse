@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import type { Episode } from '@/lib/types';
+import type { Episode, EpisodeSource } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -27,15 +27,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Loader2, PlusCircle, Trash } from 'lucide-react';
 import { Textarea } from './ui/textarea';
 
+const sourceSchema = z.object({
+  server: z.string().min(1, 'Server name is required.'),
+  url: z.string().min(1, 'URL or IFrame code is required.'),
+  language: z.enum(['Subtitled', 'Latin Spanish', 'Castilian', 'English']),
+  type: z.enum(['url', 'iframe']),
+});
+
 const FormSchema = z.object({
   title: z.string().min(1, 'Title is required.'),
   duration: z.coerce.number().min(1, 'Duration is required.'),
   synopsis: z.string().optional(),
-  sources: z.array(z.object({
-    server: z.string().min(1, 'Server name is required.'),
-    url: z.string().url('Must be a valid URL.'),
-    language: z.enum(['Subtitled', 'Latin Spanish', 'Castilian', 'English']),
-  })).min(1, 'At least one source is required.'),
+  sources: z.array(sourceSchema).min(1, 'At least one source is required.'),
   seasonId: z.string().optional(), // Important for creation
 });
 
@@ -52,6 +55,13 @@ interface EpisodeDialogProps {
 export function EpisodeDialog({ isOpen, onOpenChange, onSave, episode, seasonId }: EpisodeDialogProps) {
   const form = useForm<FormData>({
     resolver: zodResolver(FormSchema),
+    defaultValues: {
+      title: '',
+      duration: 0,
+      synopsis: '',
+      sources: [],
+      seasonId: undefined,
+    }
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -68,7 +78,7 @@ export function EpisodeDialog({ isOpen, onOpenChange, onSave, episode, seasonId 
                 title: episode.title,
                 duration: episode.duration,
                 synopsis: episode.synopsis || '',
-                sources: episode.sources.map(s => ({ server: s.server, url: s.url, language: s.language })),
+                sources: episode.sources.map(s => ({ server: s.server, url: s.url, language: s.language, type: s.type || 'url' })),
                 seasonId: episode.seasonId,
             });
         } else {
@@ -76,7 +86,7 @@ export function EpisodeDialog({ isOpen, onOpenChange, onSave, episode, seasonId 
                 title: '',
                 duration: 0,
                 synopsis: '',
-                sources: [{ server: '', language: 'Subtitled', url: '' }],
+                sources: [{ server: '', language: 'Subtitled', url: '', type: 'url' }],
                 seasonId: seasonId || undefined
             });
         }
@@ -152,11 +162,28 @@ export function EpisodeDialog({ isOpen, onOpenChange, onSave, episode, seasonId 
                   />
                   <FormField
                     control={form.control}
+                    name={`sources.${index}.type`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs">Type</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
+                            <SelectContent>
+                              <SelectItem value="url">URL</SelectItem>
+                              <SelectItem value="iframe">IFrame</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
                     name={`sources.${index}.url`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-xs">URL</FormLabel>
-                        <FormControl><Input placeholder="https://..." {...field} /></FormControl>
+                        <FormLabel className="text-xs">URL or IFrame Code</FormLabel>
+                        <FormControl><Textarea placeholder="https://... or <iframe ...>" {...field} /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -182,7 +209,7 @@ export function EpisodeDialog({ isOpen, onOpenChange, onSave, episode, seasonId 
                   />
                 </div>
               ))}
-              <Button type="button" variant="outline" size="sm" onClick={() => append({ server: '', url: '', language: 'Subtitled' })}>
+              <Button type="button" variant="outline" size="sm" onClick={() => append({ server: '', url: '', language: 'Subtitled', type: 'url' })}>
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Add Source
               </Button>

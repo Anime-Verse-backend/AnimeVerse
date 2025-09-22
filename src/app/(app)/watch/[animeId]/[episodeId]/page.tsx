@@ -132,7 +132,7 @@ export default function WatchPage() {
         return notFound();
     }
 
-    const videoJsOptions = currentSource?.type === 'url' ? {
+    const videoJsOptions = (currentSource?.type === 'url' && currentSource.url) ? {
         autoplay: true,
         controls: true,
         responsive: true,
@@ -159,9 +159,9 @@ export default function WatchPage() {
                         <div className="aspect-video w-full rounded-t-lg overflow-hidden bg-black shadow-lg">
                            {currentSource?.type === 'url' && videoJsOptions ? (
                                 <VideoPlayer options={videoJsOptions} />
-                           ) : currentSource?.type === 'iframe' ? (
+                           ) : currentSource?.type === 'iframe' && currentSource.url ? (
                                 <iframe
-                                    srcDoc={currentSource.url}
+                                    srcDoc={`<style>body,html{margin:0;padding:0;height:100%;overflow:hidden;background:#000}iframe{width:100%;height:100%;border:0}</style>${currentSource.url}`}
                                     className="w-full h-full"
                                     allowFullScreen
                                     allow="autoplay; encrypted-media; picture-in-picture"
@@ -215,7 +215,7 @@ export default function WatchPage() {
                                         <SelectContent>
                                             {availableServers.map(server => (
                                                 <SelectItem key={server} value={server}>{server}</SelectItem>
-                                            ))}
+                                            ))}\
                                         </SelectContent>
                                     </Select>
                                 </div>
