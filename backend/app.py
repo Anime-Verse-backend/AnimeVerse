@@ -43,9 +43,9 @@ DB_NAME = os.environ.get('DB_NAME', 'defaultdb')
 JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY', 'default-super-secret-key-for-dev')
 RESEND_API_KEY = os.environ.get('RESEND_API_KEY')
 FROM_EMAIL = os.environ.get('FROM_EMAIL', 'onboarding@resend.dev')
-FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'https://anime-verse-omega.vercel.app')
 # This is the new variable for the backend's public URL
-BACKEND_PUBLIC_URL = os.environ.get('BACKEND_PUBLIC_URL', 'http://127.0.0.1:8000')
+BACKEND_PUBLIC_URL = os.environ.get('BACKEND_PUBLIC_URL', 'https://animeverse-s29b.onrender.com')
 
 # --- SSL Configuration Helper ---
 def get_ssl_ca_path():
