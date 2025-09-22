@@ -1,4 +1,3 @@
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   typescript: {
@@ -39,10 +38,6 @@ const nextConfig = {
         hostname: '*.onrender.com',
         port: '',
         pathname: '/uploads/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'i.pinimg.com',
       }
     ],
   },
@@ -54,6 +49,13 @@ const nextConfig = {
         permanent: true,
       },
     ]
+  },
+  webpack: (config, { isServer }) => {
+    // Exclude problematic modules from server-side compilation
+    if (isServer) {
+      config.externals.push('jaeger-client', 'thriftrw', 'opentracing');
+    }
+    return config;
   },
 };
 
