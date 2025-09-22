@@ -868,7 +868,7 @@ def delete_user(user_id, current_user):
 @app.route("/api/users/me/avatar", methods=['POST'])
 @token_required
 def upload_avatar(current_user):
-    data = request.form
+    data = request.get_json()
     if 'avatarBase64' not in data:
         return jsonify({"message": "No se encontró la imagen"}), 400
     
