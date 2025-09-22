@@ -226,10 +226,13 @@ export const updatePassword = async (currentPassword: string, newPassword: strin
 }
 
 export const updateAvatar = async (avatarBase64: string): Promise<string> => {
+    const formData = new FormData();
+    formData.append('avatarBase64', avatarBase64);
+
     const response = await fetch(buildUrl('/api/users/me/avatar'), {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...getAuthHeader() },
-        body: JSON.stringify({ avatarBase64 }),
+        headers: getAuthHeader(), // No Content-Type header, browser will set it for FormData
+        body: formData,
     });
     const { avatarUrl } = await handleResponse<{avatarUrl: string}>(response);
     return avatarUrl;
@@ -481,4 +484,3 @@ export const deleteDeveloper = async (id: string): Promise<void> => {
         headers: getAuthHeader(),
     });
 };
-
