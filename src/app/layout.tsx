@@ -3,7 +3,6 @@ import { Inter, Space_Grotesk } from 'next/font/google';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Providers } from '@/components/providers';
-import Script from 'next/script';
 
 const fontSans = Inter({
   subsets: ['latin'],
@@ -48,11 +47,18 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning>
       <head>
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2817373977587497"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
+         <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                const script = document.createElement('script');
+                script.async = true;
+                script.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2817373977587497";
+                script.crossOrigin = "anonymous";
+                document.head.appendChild(script);
+              })();
+            `,
+          }}
         />
       </head>
       <body
