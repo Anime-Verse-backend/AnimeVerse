@@ -51,7 +51,13 @@ function ResetPasswordForm() {
       })
       router.push("/login")
     } catch (err: any) {
-      setError(err.message || "Ocurrió un error al restablecer la contraseña.")
+      const errorMessage = err.message || "Ocurrió un error al restablecer la contraseña.";
+      setError(errorMessage);
+      toast({
+          variant: "destructive",
+          title: "Error",
+          description: errorMessage,
+      });
     } finally {
       setLoading(false)
     }
@@ -97,7 +103,6 @@ function ResetPasswordForm() {
             </FormItem>
           )}
         />
-        {error && <p className="text-sm font-medium text-destructive">{error}</p>}
         <Button type="submit" className="w-full" disabled={loading}>
           {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           Restablecer Contraseña
