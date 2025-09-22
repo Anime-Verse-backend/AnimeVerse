@@ -1,127 +1,47 @@
-"use client";
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import type { Anime } from '@/lib/types';
-import * as api from '@/lib/api';
-import { suggestRelatedAnimeAction } from '@/app/actions';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Badge } from './ui/badge';
-import { Clapperboard, Star } from 'lucide-react';
-import { Skeleton } from './ui/skeleton';
+"use client"
 
-interface RelatedAnimesProps {
-  anime: Anime;
+import type { Anime } from "@/lib/types"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import Image from "next/image"
+import Link from "next/link"
+import { Star } from "lucide-react"
+
+interface AnimeCardProps {
+  anime: Anime
 }
 
-export function RelatedAnimes({ anime }: RelatedAnimesProps) {
-  const [relatedAnimes, setRelatedAnimes] = useState<Anime[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchRelated() {
-      if (!anime) return;
-      setLoading(true);
-      try {
-        const suggestedResult = await suggestRelatedAnimeAction({
-          title: anime.title,
-          genres: (anime.genres || []).map(g => g.name).join(', '),
-          description: anime.description,
-        });
-        
-        if (suggestedResult && suggestedResult.recommendations) {
-           const allAnimes = await api.getAnimes();
-           const recommendedAnimes = allAnimes
-            .filter((a: Anime) => 
-              suggestedResult.recommendations.includes(a.title) && a.id !== anime.id
-            )
-            .sort((a, b) => {
-              return suggestedResult.recommendations.indexOf(a.title) - suggestedResult.recommendations.indexOf(b.title);
-            })
-            .slice(0, 5);
-          setRelatedAnimes(recommendedAnimes);
-        }
-      } catch (error) {
-        console.error("Failed to fetch related animes:", error);
-        setRelatedAnimes([]);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    if (anime?.id) {
-        fetchRelated();
-    }
-  }, [anime]);
-
-  if (loading) {
-     return (
-        <Card>
-            <CardHeader>
-                <div className="flex items-center gap-2">
-                    <Clapperboard className="h-5 w-5 text-primary" />
-                    <CardTitle className="font-headline text-xl">You Might Also Like</CardTitle>
-                </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-                {[...Array(3)].map((_, i) => (
-                    <div key={i} className="flex items-start gap-4">
-                        <Skeleton className="h-[75px] w-[100px] rounded-md" />
-                        <div className="flex-1 space-y-2">
-                            <Skeleton className="h-4 w-3/4" />
-                            <Skeleton className="h-4 w-1/4" />
-                            <Skeleton className="h-4 w-1/2" />
-                        </div>
-                    </div>
-                ))}
-            </CardContent>
-        </Card>
-     );
-  }
-
-  if (relatedAnimes.length === 0) {
-    return null;
-  }
-
+export function AnimeCard({ anime }: AnimeCardProps) {
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center gap-2">
-          <Clapperboard className="h-5 w-5 text-primary" />
-          <CardTitle className="font-headline text-xl">You Might Also Like</CardTitle>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {relatedAnimes.map(related => (
-            <Link href={`/anime/${related.id}`} key={related.id} className="block group">
-              <div className="flex items-start gap-4 p-2 -m-2 rounded-lg hover:bg-muted/50 transition-colors">
-                 <Image
-                    src={related.imageUrl}
-                    alt={related.title}
-                    width={100}
-                    height={75}
-                    className="rounded-md object-cover aspect-[4/3]"
-                    data-ai-hint={`${(related.genres?.[0]?.name || 'anime').toLowerCase()} poster`}
-                 />
-                 <div className="flex-1">
-                    <p className="font-semibold group-hover:text-primary transition-colors">{related.title}</p>
-                    <div className="flex items-center gap-1.5 text-yellow-400 mt-1">
-                        <Star className="h-4 w-4 fill-current" />
-                        <span className="text-sm font-bold text-foreground">{related.rating}</span>
-                    </div>
-                     <div className="flex flex-wrap gap-1 mt-2">
-                        {(related.genres || []).slice(0, 2).map(g => (
-                            <Badge key={g.id} variant="secondary" className="text-xs">{g.name}</Badge>
-                        ))}\
-                    </div>
-                 </div>
+    <Link href={`/anime/${anime.id}`} className="block h-full group">
+      <Card className="h-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 animate-slide-up opacity-0 [--delay:50ms] [animation-fill-mode:forwards] [animation-delay:var(--delay)]">
+        <CardHeader className="p-0 overflow-hidden">
+          <Image
+            src={anime.imageUrl}
+            alt={`Poster for ${anime.title}`}
+            width={600}
+            height={400}
+            className="aspect-video w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            data-ai-hint={`${(anime.genres?.[0]?.name || 'anime').toLowerCase()} poster`}
+          />
+        </CardHeader>
+        <CardContent className="p-3">
+          <div className="flex items-start justify-between gap-2">
+              <CardTitle className="mb-2 font-headline text-base">{anime.title}</CardTitle>
+              <div className="flex items-center gap-1 text-yellow-400">
+                  <Star className="h-4 w-4 fill-current" />
+                  <span className="font-bold text-sm text-foreground">{anime.rating}</span>
               </div>
-            </Link>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-  );
+          </div>
+          <div className="flex flex-wrap gap-1">
+            {(anime.genres || []).map((g) => (
+              <Badge key={g.id} variant="secondary" className="text-xs">{g.name}</Badge>
+            ))}
+            <Badge variant="outline" className="text-xs">{anime.audience}</Badge>
+          </div>
+        </CardContent>
+      </Card>
+    </Link>
+  )
 }
