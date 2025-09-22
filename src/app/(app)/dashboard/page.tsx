@@ -247,6 +247,8 @@ export default function DashboardPage() {
               </div>
             ))}
           </div>
+          <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2817373977587497"
+     crossorigin="anonymous"></script>
         </div>
       )}
     </div>
