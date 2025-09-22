@@ -229,88 +229,87 @@ export default function WatchPage() {
                                         <SelectContent>
                                             {availableServers.map(server => (
                                                 <SelectItem key={server} value={server}>{server}</SelectItem>
-                                                                                        ))}
-                                                                                    </SelectContent>
-                                                                                </Select>
-                                                                            </div>
-                                                                        </div>
-                                                                     </div>
-                                                                </CardContent>
-                                                            </Card>
-                                            
-                                                            <AdBanner />
-                                            
-                                                            {episode.synopsis && (
-                                                                <Card>
-                                                                    <CardHeader>
-                                                                        <CardTitle className="flex items-center gap-2 font-headline">
-                                                                            <FileText className="h-5 w-5"/> Synopsis del Episodio
-                                                                        </CardTitle>
-                                                                    </CardHeader>
-                                                                    <CardContent>
-                                                                        <p className="text-muted-foreground">{episode.synopsis}</p>
-                                                                    </CardContent>
-                                                                </Card>
-                                                            )}
-                                            
-                                            
-                                                             <Accordion type="single" collapsible className="w-full">
-                                                                <AccordionItem value="item-1">
-                                                                    <AccordionTrigger>
-                                                                        <div className="flex items-center gap-2 font-headline text-lg">
-                                                                            <ListVideo className="h-5 w-5"/> Episode List
-                                                                        </div>
-                                                                    </AccordionTrigger>
-                                                                    <AccordionContent>
-                                                                         <Card>
-                                                                            <CardHeader>
-                                                                                 <CardTitle className="font-headline">{anime.seasons.find(s => s.id === episode?.seasonId)?.title}</CardTitle>
-                                                                            </CardHeader>
-                                                                            <CardContent>
-                                                                                <ScrollArea className="h-96">
-                                                                                    <ul className="space-y-2 pr-4">
-                                                                                        {currentSeasonEpisodes.map((ep, index) => (
-                                                                                            <li key={ep.id}>
-                                                                                                <Link href={`/watch/${animeId}/${ep.id}`} className={cn(
-                                                                                                    "flex justify-between items-center p-3 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer group",
-                                                                                                    ep.id === episodeId && "bg-muted"
-                                                                                                )}>
-                                                                                                    <div className="flex items-center gap-3">
-                                                                                                        <div className={cn(
-                                                                                                            "flex h-6 w-6 items-center justify-center rounded-sm text-xs font-bold",
-                                                                                                            ep.id === episodeId ? "bg-primary text-primary-foreground" : "bg-muted-foreground/20"
-                                                                                                        )}>
-                                                                                                            {index + 1}
-                                                                                                        </div>
-                                                                                                        <p className={cn("font-medium group-hover:text-primary transition-colors", ep.id === episodeId && "text-primary")}>{ep.title}</p>
-                                                                                                    </div>
-                                                                                                    {ep.id === episodeId && <ChevronRight className="h-5 w-5 text-primary" />}
-                                                                                                </Link>
-                                                                                            </li>
-                                                                                        ))}
-                                                                                    </ul>
-                                                                                </ScrollArea>
-                                                                            </CardContent>
-                                                                        </Card>
-                                                                    </AccordionContent>
-                                                                </AccordionItem>
-                                                                 <AccordionItem value="item-2">
-                                                                    <AccordionTrigger>
-                                                                         <div className="flex items-center gap-2 font-headline text-lg">
-                                                                            <MessageCircle className="h-5 w-5"/> Comments
-                                                                        </div>
-                                                                    </AccordionTrigger>
-                                                                    <AccordionContent>
-                                                                        <EpisodeCommentSection initialComments={episode.comments} episodeId={episode.id} />
-                                                                    </AccordionContent>
-                                                                </AccordionItem>
-                                                            </Accordion>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
+                         </div>
+                    </CardContent>
+                </Card>
+
+                <AdBanner />
+
+                {episode.synopsis && (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 font-headline">
+                                <FileText className="h-5 w-5"/> Synopsis del Episodio
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-muted-foreground">{episode.synopsis}</p>
+                        </CardContent>
+                    </Card>
+                )}
+
+
+                 <Accordion type="single" collapsible className="w-full">
+                    <AccordionItem value="item-1">
+                        <AccordionTrigger>
+                            <div className="flex items-center gap-2 font-headline text-lg">
+                                <ListVideo className="h-5 w-5"/> Episode List
+                            </div>
+                        </AccordionTrigger>
+                        <AccordionContent>
+                             <Card>
+                                <CardHeader>
+                                     <CardTitle className="font-headline">{anime.seasons.find(s => s.id === episode?.seasonId)?.title}</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <ScrollArea className="h-96">
+                                        <ul className="space-y-2 pr-4">
+                                            {currentSeasonEpisodes.map((ep, index) => (
+                                                <li key={ep.id}>
+                                                    <Link href={`/watch/${animeId}/${ep.id}`} className={cn(
+                                                        "flex justify-between items-center p-3 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer group",
+                                                        ep.id === episodeId && "bg-muted"
+                                                    )}>
+                                                        <div className="flex items-center gap-3">
+                                                            <div className={cn(
+                                                                "flex h-6 w-6 items-center justify-center rounded-sm text-xs font-bold",
+                                                                ep.id === episodeId ? "bg-primary text-primary-foreground" : "bg-muted-foreground/20"
+                                                            )}>
+                                                                {index + 1}
+                                                            </div>
+                                                            <p className={cn("font-medium group-hover:text-primary transition-colors", ep.id === episodeId && "text-primary")}>{ep.title}</p>
                                                         </div>
-                                            
-                                                        <div className="lg:col-span-1 space-y-6">
-                                                            <RelatedAnimes anime={anime} />
-                                                        </div>
-                                                    </div>
-                                                );
-                                            }
-  
+                                                        {ep.id === episodeId && <ChevronRight className="h-5 w-5 text-primary" />}
+                                                    </Link>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </ScrollArea>
+                                </CardContent>
+                            </Card>
+                        </AccordionContent>
+                    </AccordionItem>
+                     <AccordionItem value="item-2">
+                        <AccordionTrigger>
+                             <div className="flex items-center gap-2 font-headline text-lg">
+                                <MessageCircle className="h-5 w-5"/> Comments
+                            </div>
+                        </AccordionTrigger>
+                        <AccordionContent>
+                            <EpisodeCommentSection initialComments={episode.comments} episodeId={episode.id} />
+                        </AccordionContent>
+                    </AccordionItem>
+                </Accordion>
+            </div>
+
+            <div className="lg:col-span-1 space-y-6">
+                <RelatedAnimes anime={anime} />
+            </div>
+        </div>
+    );
+}

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import type { Anime, Episode } from '@/lib/types';
+import type { Anime } from '@/lib/types';
 import * as api from '@/lib/api';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -32,14 +32,6 @@ const getYouTubeEmbedUrl = (url?: string): string | null => {
     return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
 };
 
-const sortEpisodes = (episodes: Episode[]) => {
-  return [...episodes].sort((a, b) => {
-    const numA = parseInt(a.title.match(/(\d+)/)?.[0] || "0");
-    const numB = parseInt(b.title.match(/(\d+)/)?.[0] || "0");
-    return numA - numB;
-  });
-};
-
 export default function AnimeDetailPage() {
   const params = useParams();
   const animeId = typeof params.id === 'string' ? params.id.split('-')[0] : '';
@@ -52,15 +44,7 @@ export default function AnimeDetailPage() {
       api.getAnimeById(animeId)
         .then(data => {
           if (data) {
-            // Sort seasons and episodes within seasons
-            const sortedData = {
-              ...data,
-              seasons: data.seasons.map(season => ({
-                ...season,
-                episodes: sortEpisodes(season.episodes)
-              }))
-            };
-            setAnime(sortedData);
+            setAnime(data);
           } else {
             notFound();
           }
