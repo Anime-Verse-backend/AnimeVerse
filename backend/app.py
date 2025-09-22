@@ -197,8 +197,7 @@ class Season(db.Model):
         "Episode", 
         backref="season", 
         lazy="subquery", 
-        cascade="all, delete-orphan",
-        order_by="cast(substring(Episode.title, locate(' ', Episode.title) + 1), unsigned)"
+        cascade="all, delete-orphan"
     )
 
 
@@ -1013,6 +1012,11 @@ def get_anime(anime_id):
     anime = db_session.get(Anime, anime_id)
     if not anime:
         return jsonify({"message": "Anime no encontrado"}), 404
+
+    # Order episodes numerically
+    for season in anime.seasons:
+        season.episodes.sort(key=lambda e: int(re.search(r'(\d+)', e.title).group(1)) if re.search(r'(\d+)', e.title) else 0)
+
     return jsonify(anime_schema.dump(anime))
 
 @app.route("/api/animes/<string:anime_id>", methods=["PATCH"])
