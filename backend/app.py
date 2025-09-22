@@ -193,7 +193,14 @@ class Season(db.Model):
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid4()))
     title = db.Column(db.String(100), nullable=False)
     anime_id = db.Column(db.String(36), db.ForeignKey("animes.id"), nullable=False)
-    episodes = db.relationship("Episode", backref="season", lazy="subquery", cascade="all, delete-orphan")
+    episodes = db.relationship(
+        "Episode", 
+        backref="season", 
+        lazy="subquery", 
+        cascade="all, delete-orphan",
+        order_by="cast(substring(Episode.title, locate(' ', Episode.title) + 1), unsigned)"
+    )
+
 
 class Episode(db.Model):
     __tablename__ = "episodes"
@@ -1137,7 +1144,7 @@ def add_episode(anime_id, season_id, current_user):
         db_session.flush()
 
         for source_data in data.get('sources', []):
-            url_value = source_data['url']
+            url_value = source_data.get('url', '')
             source_type = source_data.get('type', 'url')
             if source_type == 'iframe':
                 url_value = extract_iframe_src(url_value)
@@ -1195,7 +1202,7 @@ def update_episode(anime_id, season_id, episode_id, current_user):
                 db_session.delete(source)
             
             for source_data in data['sources']:
-                url_value = source_data['url']
+                url_value = source_data.get('url', '')
                 source_type = source_data.get('type', 'url')
                 if source_type == 'iframe':
                     url_value = extract_iframe_src(url_value)
@@ -1849,3 +1856,5 @@ if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=True)
 
     
+
+  
