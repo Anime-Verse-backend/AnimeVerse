@@ -28,7 +28,6 @@ function ResetPasswordForm() {
   const token = searchParams.get("token")
 
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const { toast } = useToast()
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -38,11 +37,14 @@ function ResetPasswordForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!token) {
-      setError("Token no encontrado. Por favor, solicita un nuevo enlace.");
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Token no encontrado. Por favor, solicita un nuevo enlace.",
+      });
       return;
     }
     setLoading(true)
-    setError(null)
     try {
       const response = await api.resetPassword(token, values.password)
       toast({
@@ -51,13 +53,12 @@ function ResetPasswordForm() {
       })
       router.push("/login")
     } catch (err: any) {
-      const errorMessage = err.message || "Ocurrió un error al restablecer la contraseña.";
-      setError(errorMessage);
-      toast({
+        const errorMessage = err.message || "Ocurrió un error al restablecer la contraseña.";
+        toast({
           variant: "destructive",
           title: "Error",
           description: errorMessage,
-      });
+        });
     } finally {
       setLoading(false)
     }
