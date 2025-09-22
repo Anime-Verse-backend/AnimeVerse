@@ -197,7 +197,8 @@ class Season(db.Model):
         "Episode", 
         backref="season", 
         lazy="subquery", 
-        cascade="all, delete-orphan"
+        cascade="all, delete-orphan",
+        order_by="Episode.title"  # Basic alphabetical sort
     )
 
 
@@ -918,7 +919,7 @@ def get_animes():
     genre = request.args.get('genre')
     status = request.args.get('status')
     min_rating = request.args.get('min_rating', type=float)
-    is_featured = request.args.get('isFeatured')
+    is_featured_str = request.args.get('isFeatured')
 
     if search:
         search_term = f"%{search}%"
@@ -931,8 +932,10 @@ def get_animes():
         query = query.filter(Anime.status == status)
     if min_rating:
         query = query.filter(Anime.rating >= min_rating)
-    if is_featured:
-        query = query.filter(Anime.is_featured == (is_featured.lower() == 'true'))
+    if is_featured_str is not None:
+        is_featured = is_featured_str.lower() in ['true', '1', 't']
+        query = query.filter(Anime.is_featured == is_featured)
+
 
     # Sorting
     sort_by = request.args.get('sort_by', 'rating_desc')
@@ -1858,3 +1861,9 @@ initialize_app(app)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=True)
+
+    
+
+  
+
+
