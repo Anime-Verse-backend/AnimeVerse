@@ -209,9 +209,11 @@ class EpisodeSource(db.Model):
     __tablename__ = "episode_sources"
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid4()))
     server = db.Column(db.String(100), nullable=False)
-    url = db.Column(db.String(255), nullable=False)
+    url = db.Column(db.Text, nullable=False)
     language = db.Column(db.String(20), nullable=False)
+    type = db.Column(db.String(10), nullable=False, default='url') # 'url' or 'iframe'
     episode_id = db.Column(db.String(36), db.ForeignKey("episodes.id"), nullable=False)
+
 
 class Comment(db.Model):
     __tablename__ = "comments"
@@ -396,6 +398,8 @@ class EpisodeSourceSchema(ma.Schema):
     server = fields.Str()
     url = fields.Str()
     language = fields.Str()
+    type = fields.Str()
+
 
 class EpisodeSchema(ma.Schema):
     id = fields.Str(dump_only=True)
@@ -1121,6 +1125,7 @@ def add_episode(anime_id, season_id, current_user):
                 server=source_data['server'],
                 url=source_data['url'],
                 language=source_data['language'],
+                type=source_data.get('type', 'url'),
                 episode_id=new_episode.id
             )
             db_session.add(new_source)
@@ -1173,6 +1178,7 @@ def update_episode(anime_id, season_id, episode_id, current_user):
                     server=source_data['server'],
                     url=source_data['url'],
                     language=source_data['language'],
+                    type=source_data.get('type', 'url'),
                     episode_id=episode.id
                 )
                 db_session.add(new_source)

@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import type { Developer } from '@/lib/types';
+import type { Episode } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -23,137 +23,198 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import Image from 'next/image';
-import { Loader2 } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { Loader2, PlusCircle, Trash } from 'lucide-react';
+import { Textarea } from './ui/textarea';
 
-const socialMediaSchema = z.object({
-    github: z.string().optional(),
-    linkedin: z.string().optional(),
-    twitter: z.string().optional(),
-}).optional();
+const sourceSchema = z.object({
+  server: z.string().min(1, 'Server name is required.'),
+  url: z.string().min(1, 'URL or IFrame code is required.'),
+  language: z.enum(['Subtitled', 'Latin Spanish', 'Castilian', 'English']),
+  type: z.enum(['url', 'iframe']),
+});
 
 const FormSchema = z.object({
-  name: z.string().min(1, 'Name is required.'),
-  role: z.string().min(1, 'Role is required.'),
-  imageUrl: z.string().min(1, 'Image is required.'),
-  socialMedia: socialMediaSchema
+  title: z.string().min(1, 'Title is required.'),
+  duration: z.coerce.number().min(1, 'Duration is required.'),
+  synopsis: z.string().optional(),
+  sources: z.array(sourceSchema).min(1, 'At least one source is required.'),
+  seasonId: z.string().optional(), // Important for creation
 });
 
 type FormData = z.infer<typeof FormSchema>;
 
-interface DeveloperDialogProps {
+interface EpisodeDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  onSave: (developer: Omit<Developer, 'id'> & { imageBase64?: string | null }) => Promise<void>;
-  developer: Developer | null;
+  onSave: (episode: Partial<Omit<Episode, 'id'>>) => Promise<void>;
+  episode: Episode | null;
+  seasonId: string | null;
 }
 
-const fileToDataUri = (file: File): Promise<string> => new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-});
-
-export function DeveloperDialog({ isOpen, onOpenChange, onSave, developer }: DeveloperDialogProps) {
+export function EpisodeDialog({ isOpen, onOpenChange, onSave, episode, seasonId }: EpisodeDialogProps) {
   const form = useForm<FormData>({
     resolver: zodResolver(FormSchema),
+    defaultValues: {
+      title: '',
+      duration: 0,
+      synopsis: '',
+      sources: [],
+      seasonId: undefined,
+    }
   });
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [imageBase64, setImageBase64] = useState<string | null>(null);
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "sources"
+  });
+
   const [isSaving, setIsSaving] = useState(false);
   
   useEffect(() => {
     if (isOpen) {
-        if (developer) {
+        if (episode) {
             form.reset({
-                name: developer.name,
-                role: developer.role,
-                imageUrl: developer.imageUrl,
-                socialMedia: developer.socialMedia || {}
+                title: episode.title,
+                duration: episode.duration,
+                synopsis: episode.synopsis || '',
+                sources: episode.sources.map(s => ({ server: s.server, url: s.url, language: s.language, type: s.type || 'url' })),
+                seasonId: episode.seasonId,
             });
-            setImagePreview(developer.imageUrl);
         } else {
             form.reset({
-                name: '',
-                role: '',
-                imageUrl: 'https://placehold.co/400x400.png',
-                socialMedia: {}
+                title: '',
+                duration: 0,
+                synopsis: '',
+                sources: [{ server: '', language: 'Subtitled', url: '', type: 'url' }],
+                seasonId: seasonId || undefined
             });
-            setImagePreview('https://placehold.co/400x400.png');
         }
-        setImageBase64(null);
     }
-  }, [developer, form, isOpen]);
+  }, [episode, isOpen, form, seasonId]);
 
   const handleSubmit = async (data: FormData) => {
     setIsSaving(true);
-    await onSave({ ...data, imageBase64 });
+    await onSave(data);
     setIsSaving(false);
   };
   
   const handleOpenChange = (open: boolean) => {
     if (!open) {
       form.reset();
-      setImagePreview(null);
-      setImageBase64(null);
     }
     onOpenChange(open);
   }
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-xl">
         <DialogHeader>
-          <DialogTitle>{developer ? 'Edit Developer' : 'Add New Developer'}</DialogTitle>
+          <DialogTitle>{episode ? 'Edit Episode' : 'Add New Episode'}</DialogTitle>
           <DialogDescription>
-            {developer ? 'Make changes to the developer profile.' : 'Add a new developer to the team list.'}
+             {episode ? 'Make changes to the episode details below.' : 'Add a new episode to the season.'}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4 py-4 max-h-[70vh] overflow-y-auto pr-4">
-            <FormField control={form.control} name="name" render={({ field }) => ( <FormItem><FormLabel>Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem> )} />
-            <FormField control={form.control} name="role" render={({ field }) => ( <FormItem><FormLabel>Role</FormLabel><FormControl><Input placeholder="e.g., Lead Developer" {...field} /></FormControl><FormMessage /></FormItem> )} />
-            
-            <FormField control={form.control} name="imageUrl" render={({ field }) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <FormField control={form.control} name="title" render={({ field }) => (
                 <FormItem>
-                    <FormLabel>Image</FormLabel>
-                    <div className='flex items-center gap-4'>
-                        {imagePreview && <Image src={imagePreview} alt="Preview" width={60} height={60} className="rounded-full aspect-square object-cover" />}
-                        <Input
-                            type="file"
-                            accept="image/*"
-                            onChange={async (e) => {
-                                const file = e.target.files?.[0];
-                                if (file) {
-                                    const previewUrl = URL.createObjectURL(file);
-                                    setImagePreview(previewUrl);
-                                    const dataUri = await fileToDataUri(file);
-                                    setImageBase64(dataUri);
-                                    form.setValue('imageUrl', previewUrl, { shouldValidate: true });
-                                }
-                            }}
-                        />
-                    </div>
-                    <FormMessage />
+                  <FormLabel>Title</FormLabel>
+                  <FormControl><Input {...field} /></FormControl>
+                  <FormMessage />
                 </FormItem>
-            )}/>
+              )} />
+              <FormField control={form.control} name="duration" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Duration (min)</FormLabel>
+                  <FormControl><Input type="number" {...field} /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+            </div>
 
-            <h3 className="text-sm font-medium pt-2">Social Media (Optional)</h3>
-            <FormField control={form.control} name="socialMedia.github" render={({ field }) => ( <FormItem><FormLabel className="text-xs">GitHub</FormLabel><FormControl><Input placeholder="https://github.com/..." {...field} /></FormControl><FormMessage /></FormItem> )} />
-            <FormField control={form.control} name="socialMedia.linkedin" render={({ field }) => ( <FormItem><FormLabel className="text-xs">LinkedIn</FormLabel><FormControl><Input placeholder="https://linkedin.com/in/..." {...field} /></FormControl><FormMessage /></FormItem> )} />
-            <FormField control={form.control} name="socialMedia.twitter" render={({ field }) => ( <FormItem><FormLabel className="text-xs">Twitter / X</FormLabel><FormControl><Input placeholder="https://x.com/..." {...field} /></FormControl><FormMessage /></FormItem> )} />
-           
-            <DialogFooter className="pt-4">
-              <Button type="button" variant="ghost" onClick={() => handleOpenChange(false)} disabled={isSaving}>Cancel</Button>
-              <Button type="submit" disabled={isSaving}>
-                {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Save
+             <FormField control={form.control} name="synopsis" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Synopsis</FormLabel>
+                  <FormControl><Textarea placeholder="Episode synopsis..." {...field} /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+            
+            <div className="space-y-4">
+              <FormLabel>Sources</FormLabel>
+              {fields.map((field, index) => (
+                <div key={field.id} className="space-y-2 border p-3 rounded-lg relative">
+                   <Button variant="ghost" size="icon" onClick={() => remove(index)} className="absolute top-1 right-1 h-6 w-6">
+                        <Trash className="h-4 w-4 text-destructive" />
+                   </Button>
+                   <FormField
+                    control={form.control}
+                    name={`sources.${index}.server`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs">Server</FormLabel>
+                        <FormControl><Input placeholder="e.g., PixelStream" {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`sources.${index}.type`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs">Type</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
+                            <SelectContent>
+                              <SelectItem value="url">URL</SelectItem>
+                              <SelectItem value="iframe">IFrame</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`sources.${index}.url`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs">URL or IFrame Code</FormLabel>
+                        <FormControl><Textarea placeholder="https://... or <iframe ...>" {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`sources.${index}.language`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs">Language</FormLabel>
+                         <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
+                            <SelectContent>
+                              <SelectItem value="Subtitled">Subtitled</SelectItem>
+                              <SelectItem value="Latin Spanish">Latin Spanish</SelectItem>
+                              <SelectItem value="Castilian">Castilian</SelectItem>
+                              <SelectItem value="English">English</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              ))}
+              <Button type="button" variant="outline" size="sm" onClick={() => append({ server: '', url: '', language: 'Subtitled', type: 'url' })}>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Add Source
               </Button>
-            </DialogFooter>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
-  );
-}
+            </div>
+
+            <DialogFooter>
+              <Button type="button" variant="ghost" onClick={() => handleOpenChange(false)} disabled={isSaving}>Cancel</Button>
+              <Button type="submit" disabled={isSaving}>\n                {isSaving && <Loader2 className=\"mr-2 h-4 w-4 animate-spin\" />}\n                Save Changes\n              </Button>\n            </DialogFooter>\n          </form>\n        </Form>\n      </DialogContent>\n    </Dialog>\n  );\n}\n

@@ -1,5 +1,6 @@
 
 
+
 export type User = {
   id: string;
   username: string;
@@ -58,6 +59,7 @@ export type EpisodeSource = {
   server: string;
   url: string;
   language: 'Subtitled' | 'Latin Spanish' | 'Castilian' | 'English';
+  type: 'url' | 'iframe';
 };
 
 export type Episode = {
