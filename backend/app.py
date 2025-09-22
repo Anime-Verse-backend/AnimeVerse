@@ -875,8 +875,6 @@ def upload_avatar(current_user):
     current_user.avatar_url = data['avatarBase64']
     try:
         db_session.commit()
-        # Return the new URL (which could be the same data URI)
-        # using the same schema method to ensure consistency
         user_dump = user_schema.dump(current_user)
         return jsonify({"avatarUrl": user_dump['avatarUrl']})
     except Exception as e:
@@ -1861,3 +1859,5 @@ initialize_app(app)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=True)
+
+
