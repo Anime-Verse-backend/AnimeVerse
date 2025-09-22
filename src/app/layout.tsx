@@ -25,7 +25,11 @@ export const metadata: Metadata = {
   },
   keywords: ['anime online', 'ver anime', 'anime gratis', 'anime español', 'anime subtitulado', 'series de anime', 'comunidad de anime'],
   verification: {
-    google: 'ca-pub-2817373977587497', // AdSense verification meta tag
+    // This is for Google Search Console, not AdSense account verification.
+    // google: 'your-google-site-verification-code', 
+  },
+  other: {
+    'google-adsense-account': 'ca-pub-2817373977587497',
   },
   openGraph: {
     title: 'AnimeVerse | Tu Universo de Anime Online',
@@ -50,7 +54,7 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning>
       <head>
-        {/* The AdSense script can be added back here once the site is verified, if needed */}
+        {/* The AdSense script is not needed if using the meta tag for verification */}
       </head>
       <body
         className={cn(
