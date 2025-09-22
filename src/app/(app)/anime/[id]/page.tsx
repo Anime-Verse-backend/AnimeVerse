@@ -34,7 +34,7 @@ const getYouTubeEmbedUrl = (url?: string): string | null => {
 
 export default function AnimeDetailPage() {
   const params = useParams();
-  const animeId = typeof params.id === 'string' ? params.id.split('-')[0] : '';
+  const animeId = typeof params.id === 'string' ? params.id : '';
   
   const [anime, setAnime] = useState<Anime | null>(null);
   const [loading, setLoading] = useState(true);

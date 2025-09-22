@@ -38,6 +38,7 @@ const fileToDataUri = (file: File): Promise<string> => new Promise((resolve, rej
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result as string);
     reader.onerror = reject;
+    reader.readAsDataURL(file);
 });
 
 

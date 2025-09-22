@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useMemo, useEffect } from 'react';
@@ -18,14 +17,6 @@ import { cn } from '@/lib/utils';
 import { EpisodeCommentSection } from '@/components/episode-comment-section';
 import { AdBanner } from '@/components/ad-banner';
 import { VideoPlayer } from '@/components/video-player';
-
-const sortEpisodes = (episodes: Episode[]) => {
-  return [...episodes].sort((a, b) => {
-    const numA = parseInt(a.title.match(/(\d+)/)?.[0] || "0");
-    const numB = parseInt(b.title.match(/(\d+)/)?.[0] || "0");
-    return numA - numB;
-  });
-};
 
 export default function WatchPage() {
     const router = useRouter();
@@ -52,15 +43,8 @@ export default function WatchPage() {
 
             api.getAnimeById(animeId).then(data => {
                 if (data) {
-                    const sortedData = {
-                      ...data,
-                      seasons: data.seasons.map(season => ({
-                        ...season,
-                        episodes: sortEpisodes(season.episodes)
-                      }))
-                    };
-                    setAnime(sortedData);
-                    const currentEpisode = sortedData.seasons?.flatMap(s => s.episodes).find(e => e.id === episodeId);
+                    setAnime(data);
+                    const currentEpisode = data.seasons?.flatMap(s => s.episodes).find(e => e.id === episodeId);
                     if (currentEpisode) {
                         setEpisode(currentEpisode);
                         const languages = [...new Set(currentEpisode.sources.map(s => s.language))];
@@ -112,7 +96,7 @@ export default function WatchPage() {
         const season = anime.seasons.find(s => s.id === episode.seasonId);
         if (!season) return { currentSeasonEpisodes: [], previousEpisode: null, nextEpisode: null };
         
-        const sortedEpisodes = season.episodes; // Already sorted
+        const sortedEpisodes = season.episodes;
         const currentIndex = sortedEpisodes.findIndex(e => e.id === episode.id);
 
         return {

@@ -5,7 +5,6 @@ export const dynamic = 'force-dynamic';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Check, Star } from "lucide-react"
@@ -26,7 +25,7 @@ export default function SettingsPage() {
         <CardContent>
           <div className="flex flex-col sm:flex-row items-start justify-between rounded-lg border p-4">
             <div className="space-y-1.5 mb-4 sm:mb-0">
-                <Label className="text-base flex items-center gap-2">
+                <Label className="text-base flex items-center gap-2"> 
                     Your Plan: 
                     <Badge>Free Tier</Badge>
                 </Label>

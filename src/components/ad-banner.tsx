@@ -1,7 +1,6 @@
 "use client"
 
 import { Card, CardContent } from "@/components/ui/card"
-import { ExternalLink } from "lucide-react"
 
 export function AdBanner() {
   return (

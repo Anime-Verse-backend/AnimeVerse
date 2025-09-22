@@ -7,7 +7,6 @@ import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { PlayCircle } from 'lucide-react';
 import * as api from '@/lib/api';
-import { Anime } from '@/lib/types';
 
 interface ContinueWatchingData {
     animeId: string;

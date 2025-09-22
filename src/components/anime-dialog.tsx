@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -303,5 +302,3 @@ export function AnimeDialog({ isOpen, onOpenChange, onSave, anime }: AnimeDialog
     </Dialog>
   );
 }
-
-    

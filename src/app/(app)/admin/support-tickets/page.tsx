@@ -20,7 +20,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Loader2, MoreHorizontal, CheckCircle, Archive, LifeBuoy, CircleDashed, User } from 'lucide-react';
+import { Loader2, MoreHorizontal, CheckCircle, Archive, LifeBuoy, CircleDashed } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { formatDistanceToNow } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -7,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Image from 'next/image';
-import type { Anime, Season, Episode, EpisodeSource, Genre } from '@/lib/types';
+import type { Anime, Season, Episode } from '@/lib/types';
 import * as api from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -65,8 +64,6 @@ export default function EditAnimePage() {
 
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [episodeToDelete, setEpisodeToDelete] = useState<{ seasonId: string; episodeId: string; episodeTitle: string } | null>(null);
-  const [seasonToDelete, setSeasonToDelete] = useState<Season | null>(null);
-
 
   const [isEpisodeDialogOpen, setIsEpisodeDialogOpen] = useState(false);
   const [editingEpisode, setEditingEpisode] = useState<Episode | null>(null);
@@ -163,9 +160,8 @@ export default function EditAnimePage() {
 
   const handleAddSeason = async () => {
     if (!newSeasonTitle.trim()) return;
-    const newSeasonData: Omit<Season, 'id'|'episodes'|'animeId'> = { title: newSeasonTitle };
     try {
-        const newSeason = await api.addSeason(anime.id, newSeasonData);
+        const newSeason = await api.addSeason(anime.id, { title: newSeasonTitle });
         setSeasons([...seasons, newSeason]);
         setNewSeasonTitle('');
         toast({ title: "Success", description: "Season added." });
@@ -173,16 +169,6 @@ export default function EditAnimePage() {
         toast({ variant: 'destructive', title: 'Error', description: 'Failed to add season.' });
     }
   };
-
-  const handleDeleteSeason = async () => {
-    if (!seasonToDelete) return;
-    // This is a placeholder, you'll need to implement api.deleteSeason
-    // await api.deleteSeason(anime.id, seasonToDelete.id);
-    console.log("Deleting season (API call not implemented)", seasonToDelete.id);
-    setSeasons(seasons.filter(s => s.id !== seasonToDelete.id));
-    toast({ title: "Success", description: `Season "${seasonToDelete.title}" deleted.`});
-    setSeasonToDelete(null);
-  }
   
   const openEpisodeDialog = (seasonId: string, episode: Episode | null = null) => {
     setEditingEpisode(episode);
@@ -220,7 +206,7 @@ export default function EditAnimePage() {
         savedEpisode = await api.updateEpisode(animeId, editingEpisode.seasonId, editingEpisode.id, episodeData);
          setSeasons(prevSeasons => prevSeasons.map(season => 
             season.id === savedEpisode.seasonId 
-            ? { ...season, episodes: season.episodes.map(ep => ep.id === savedEpisode.id ? savedEpisode : ep) }
+            ? { ...season, episodes: season.episodes.map(ep => ep.id === savedEpisode.id ? savedEpisode : ep) } 
             : season
         ));
         toast({ title: "Success", description: "Episode updated successfully." });
@@ -228,7 +214,6 @@ export default function EditAnimePage() {
         const seasonIdForNewEpisode = currentSeasonId;
         if(!seasonIdForNewEpisode) throw new Error("Season ID is missing to add a new episode.");
         
-        // The episodeData from the form already contains the seasonId if we pass it
         const finalEpisodeData = {
           ...episodeData,
           seasonId: seasonIdForNewEpisode,
@@ -237,7 +222,7 @@ export default function EditAnimePage() {
         savedEpisode = await api.addEpisode(animeId, seasonIdForNewEpisode, finalEpisodeData as Omit<Episode, 'id' | 'comments'>);
         setSeasons(prevSeasons => prevSeasons.map(season => 
             season.id === savedEpisode.seasonId 
-            ? { ...season, episodes: [...season.episodes, savedEpisode] }
+            ? { ...season, episodes: [...season.episodes, savedEpisode] } 
             : season
         ));
         toast({ title: "Success", description: "Episode added successfully." });
@@ -434,13 +419,13 @@ export default function EditAnimePage() {
         </AlertDialogContent>
       </AlertDialog>
 
-      {isEpisodeDialogOpen && <EpisodeDialog 
+      <EpisodeDialog 
         isOpen={isEpisodeDialogOpen}
         onOpenChange={setIsEpisodeDialogOpen}
         episode={editingEpisode}
         seasonId={currentSeasonId}
         onSave={handleEpisodeSave}
-      />}
+      />
 
     </div>
   );

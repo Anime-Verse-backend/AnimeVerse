@@ -21,7 +21,7 @@ const adminNavItems = [
 
 // Regular user items
 const userNavItems = [
-    { href: "/", icon: <LayoutDashboard className="h-4 w-4" />, label: "Dashboard" },
+    { href: "/dashboard", icon: <LayoutDashboard className="h-4 w-4" />, label: "Dashboard" },
     { href: "/allies", icon: <Handshake className="h-4 w-4" />, label: "Allies" },
     { href: "/developers", icon: <Code className="h-4 w-4" />, label: "Developers" },
     { href: "/profile", icon: <Users className="h-4 w-4" />, label: "Profile" },
@@ -31,7 +31,7 @@ const userNavItems = [
 ];
 
 const guestNavItems = [
-    { href: "/", icon: <LayoutDashboard className="h-4 w-4" />, label: "Dashboard" },
+    { href: "/dashboard", icon: <LayoutDashboard className="h-4 w-4" />, label: "Dashboard" },
     { href: "/allies", icon: <Handshake className="h-4 w-4" />, label: "Allies" },
     { href: "/developers", icon: <Code className="h-4 w-4" />, label: "Developers" },
     { href: "/contact", icon: <Contact className="h-4 w-4" />, label: "Contact Us" },
@@ -62,7 +62,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   }
   
   const currentHeaderTitle = isAdminPage ? 'Admin Panel' : 'AnimeVerse';
-  const currentHeaderLink = isAdminPage ? '/admin' : '/';
+  const currentHeaderLink = isAdminPage ? '/admin' : '/dashboard';
 
   return (
     <SidebarProvider>
@@ -77,7 +77,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           <SidebarMenu>
             {currentNavItems.map((item) => (
                 <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton asChild isActive={pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))} className="justify-start">
+                    <SidebarMenuButton asChild isActive={pathname === item.href || (item.href !== '/' && item.href !== '/dashboard' && pathname.startsWith(item.href))} className="justify-start">
                         <Link href={item.href}>{item.icon}{item.label}</Link>
                     </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -93,7 +93,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
              {isAdminPage && (
                  <SidebarMenuItem>
                     <SidebarMenuButton asChild className="justify-start font-semibold text-muted-foreground hover:text-foreground">
-                        <Link href="/"><Clapperboard className="mr-2 h-5 w-5" />Ver Sitio</Link>
+                        <Link href="/dashboard"><Clapperboard className="mr-2 h-5 w-5" />Ver Sitio</Link>
                     </SidebarMenuButton>
                 </SidebarMenuItem>
             )}

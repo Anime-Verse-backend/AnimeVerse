@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import type { User } from '@/lib/types';
 import * as api from '@/lib/api';
 import { Button } from '@/components/ui/button';
