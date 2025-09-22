@@ -1,6 +1,5 @@
 import { MetadataRoute } from 'next';
 import { getAnimes } from '@/lib/api';
-import { slugify } from '@/lib/utils';
 
 // Revalidate the sitemap every hour to fetch new animes
 export const revalidate = 60 * 60; 
@@ -20,7 +19,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const animes = await getAnimes();
     const animePages = animes.map((anime) => ({
-      url: `${baseUrl}/anime/${anime.id}/${slugify(anime.title)}`,
+      url: `${baseUrl}/anime/${anime.id}`,
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
