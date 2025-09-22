@@ -24,6 +24,9 @@ export const metadata: Metadata = {
     icon: `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='hsl(275, 70%, 42%)'><path d='M82 20L50 85L18 20H82Z' /><path d='M50 85L25 95H75L50 85Z' /></g><g fill='white'><path d='M50 50L40 65H60L50 50Z' /></g></svg>`
   },
   keywords: ['anime online', 'ver anime', 'anime gratis', 'anime español', 'anime subtitulado', 'series de anime', 'comunidad de anime'],
+  verification: {
+    google: 'ca-pub-2817373977587497', // AdSense verification meta tag
+  },
   openGraph: {
     title: 'AnimeVerse | Tu Universo de Anime Online',
     description: 'Explora, descubre y comenta sobre tus series de anime favoritas.',
@@ -47,19 +50,7 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning>
       <head>
-         <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                const script = document.createElement('script');
-                script.async = true;
-                script.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2817373977587497";
-                script.crossOrigin = "anonymous";
-                document.head.appendChild(script);
-              })();
-            `,
-          }}
-        />
+        {/* The AdSense script can be added back here once the site is verified, if needed */}
       </head>
       <body
         className={cn(
