@@ -114,7 +114,7 @@ export function RelatedAnimes({ anime }: RelatedAnimesProps) {
                      <div className="flex flex-wrap gap-1 mt-2">
                         {(related.genres || []).slice(0, 2).map(g => (
                             <Badge key={g.id} variant="secondary" className="text-xs">{g.name}</Badge>
-                        ))}\
+                        ))}
                     </div>
                  </div>
               </div>
