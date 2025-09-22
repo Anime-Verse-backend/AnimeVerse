@@ -24,10 +24,6 @@ export const metadata: Metadata = {
     icon: `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><g fill='hsl(275, 70%, 42%)'><path d='M82 20L50 85L18 20H82Z' /><path d='M50 85L25 95H75L50 85Z' /></g><g fill='white'><path d='M50 50L40 65H60L50 50Z' /></g></svg>`
   },
   keywords: ['anime online', 'ver anime', 'anime gratis', 'anime español', 'anime subtitulado', 'series de anime', 'comunidad de anime'],
-  verification: {
-    // This is for Google Search Console, not AdSense account verification.
-    // google: 'your-google-site-verification-code', 
-  },
   other: {
     'google-adsense-account': 'ca-pub-2817373977587497',
   },
@@ -54,7 +50,7 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning>
       <head>
-        {/* The AdSense script is not needed if using the meta tag for verification */}
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2817373977587497" crossOrigin="anonymous"></script>
       </head>
       <body
         className={cn(
