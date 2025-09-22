@@ -113,7 +113,7 @@ export default function DashboardPage() {
     <div className="space-y-8">
       <div className="space-y-4">
         <div>
-          <h1 className="text-3xl font-bold font-headline">Explora el Universo del Anime</h1>
+          <h1 className="text-3xl font-bold font-headline">Explora el Universo del Anime hola</h1>
           <p className="text-muted-foreground">Encuentra tu próxima serie favorita.</p>
         </div>
         <div className="relative">
