@@ -17,10 +17,11 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { PlusCircle, Trash, Pencil, Loader2, Code } from 'lucide-react';
+import { PlusCircle, Trash, Pencil, Loader2, Code, Github, Linkedin, Twitter } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 import { DeveloperDialog } from '@/components/developer-dialog';
+import Link from 'next/link';
 
 export default function ManageDevelopersPage() {
     const [developers, setDevelopers] = useState<Developer[]>([]);
@@ -83,6 +84,12 @@ export default function ManageDevelopersPage() {
             setDeveloperToDelete(null);
         }
     };
+    
+    const socialIcons = {
+        github: <Github className="h-5 w-5" />,
+        linkedin: <Linkedin className="h-5 w-5" />,
+        twitter: <Twitter className="h-5 w-5" />,
+    }
 
     if (loading) {
         return <div className="flex h-full w-full items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>;
@@ -109,6 +116,17 @@ export default function ManageDevelopersPage() {
                         </CardHeader>
                         <CardContent className="flex-grow">
                             <p className="text-sm text-primary">{dev.role}</p>
+                            <div className="flex justify-center gap-1 mt-2">
+                                {dev.socialMedia && Object.entries(dev.socialMedia).map(([key, url]) => (
+                                    socialIcons[key as keyof typeof socialIcons] && url && (
+                                        <Button asChild key={key} variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground">
+                                            <Link href={url} target="_blank" rel="noopener noreferrer" aria-label={`${dev.name}'s ${key}`}>
+                                                {socialIcons[key as keyof typeof socialIcons]}
+                                            </Link>
+                                        </Button>
+                                    )
+                                ))}
+                            </div>
                         </CardContent>
                         <CardFooter className="flex justify-center gap-2">
                            <Button variant="outline" size="sm" onClick={() => handleOpenDialog(dev)}>
