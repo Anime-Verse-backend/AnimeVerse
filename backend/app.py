@@ -345,7 +345,7 @@ class BaseCommentSchema(Schema):
 
 class ParentCommentSchema(BaseCommentSchema):
      class Meta:
-        fields = ("id", "text", "author", "is_deleted")
+        fields = ("id", "text", "author", "isDeleted")
 
 class CommentSchema(BaseCommentSchema):
     parent = fields.Nested(ParentCommentSchema, dump_only=True)
@@ -382,7 +382,7 @@ class PublicUserSchema(Schema):
 class ParentEpisodeCommentSchema(BaseCommentSchema):
     class Meta:
         model = EpisodeComment
-        fields = ("id", "text", "author", "is_deleted")
+        fields = ("id", "text", "author", "isDeleted")
 
 class EpisodeCommentSchema(BaseCommentSchema):
     parent = fields.Nested(ParentEpisodeCommentSchema, dump_only=True)
@@ -1861,9 +1861,3 @@ initialize_app(app)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=True)
-
-    
-
-  
-
-
