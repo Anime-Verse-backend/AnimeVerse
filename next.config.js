@@ -40,15 +40,20 @@ const nextConfig = {
         port: '',
         pathname: '/uploads/**',
       },
-     {
-        protocol: 'https', 
-        hostname: 'i.pinimg.com'
-      },
       {
         protocol: 'https',
-        hostname: 'waaw.ac'
+        hostname: 'i.pinimg.com',
       }
     ],
+  },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/dashboard',
+        permanent: true,
+      },
+    ]
   },
 };
 
