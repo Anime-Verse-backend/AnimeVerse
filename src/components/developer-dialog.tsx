@@ -217,4 +217,14 @@ export function EpisodeDialog({ isOpen, onOpenChange, onSave, episode, seasonId 
 
             <DialogFooter>
               <Button type="button" variant="ghost" onClick={() => handleOpenChange(false)} disabled={isSaving}>Cancel</Button>
-              <Button type="submit" disabled={isSaving}>\n                {isSaving && <Loader2 className=\"mr-2 h-4 w-4 animate-spin\" />}\n                Save Changes\n              </Button>\n            </DialogFooter>\n          </form>\n        </Form>\n      </DialogContent>\n    </Dialog>\n  );\n}\n
+                            <Button type="submit" disabled={isSaving}>
+                              {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                              Save Changes
+                            </Button>
+                          </DialogFooter>
+                        </form>
+                      </Form>
+                    </DialogContent>
+                  </Dialog>
+                );
+              }
