@@ -1097,6 +1097,22 @@ def add_season(anime_id, current_user):
         app.logger.error(f"Error adding season: {e}")
         return jsonify({"message": "Error interno al añadir temporada"}), 500
 
+def extract_iframe_src(iframe_code):
+    """Extrae la URL del atributo src de una etiqueta iframe."""
+    if not iframe_code or not iframe_code.strip().startswith('<iframe'):
+        return iframe_code # It's likely a direct URL
+    
+    src_match = re.search(r'src="([^"]+)"', iframe_code)
+    if src_match:
+        return src_match.group(1)
+    
+    # Fallback for single quotes
+    src_match_single = re.search(r"src='([^']+)'", iframe_code)
+    if src_match_single:
+        return src_match_single.group(1)
+        
+    return iframe_code # Return original if no src found
+
 # EPISODES
 @app.route("/api/animes/<string:anime_id>/seasons/<string:season_id>/episodes", methods=["POST"])
 @admin_token_required
@@ -1121,11 +1137,16 @@ def add_episode(anime_id, season_id, current_user):
         db_session.flush()
 
         for source_data in data.get('sources', []):
+            url_value = source_data['url']
+            source_type = source_data.get('type', 'url')
+            if source_type == 'iframe':
+                url_value = extract_iframe_src(url_value)
+            
             new_source = EpisodeSource(
                 server=source_data['server'],
-                url=source_data['url'],
+                url=url_value,
                 language=source_data['language'],
-                type=source_data.get('type', 'url'),
+                type=source_type,
                 episode_id=new_episode.id
             )
             db_session.add(new_source)
@@ -1174,11 +1195,16 @@ def update_episode(anime_id, season_id, episode_id, current_user):
                 db_session.delete(source)
             
             for source_data in data['sources']:
+                url_value = source_data['url']
+                source_type = source_data.get('type', 'url')
+                if source_type == 'iframe':
+                    url_value = extract_iframe_src(url_value)
+                
                 new_source = EpisodeSource(
                     server=source_data['server'],
-                    url=source_data['url'],
+                    url=url_value,
                     language=source_data['language'],
-                    type=source_data.get('type', 'url'),
+                    type=source_type,
                     episode_id=episode.id
                 )
                 db_session.add(new_source)

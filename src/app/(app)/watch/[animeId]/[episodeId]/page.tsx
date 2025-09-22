@@ -161,11 +161,10 @@ export default function WatchPage() {
                                 <VideoPlayer options={videoJsOptions} />
                            ) : currentSource?.type === 'iframe' && currentSource.url ? (
                                 <iframe
-                                    srcDoc={`<style>body,html{margin:0;padding:0;height:100%;overflow:hidden;background:#000}iframe{width:100%;height:100%;border:0}</style>${currentSource.url}`}
+                                    src={currentSource.url}
                                     className="w-full h-full"
                                     allowFullScreen
                                     allow="autoplay; encrypted-media; picture-in-picture"
-                                    sandbox="allow-scripts allow-same-origin"
                                 ></iframe>
                            ) : (
                                 <div className="w-full h-full flex items-center justify-center text-muted-foreground bg-muted">
@@ -215,7 +214,7 @@ export default function WatchPage() {
                                         <SelectContent>
                                             {availableServers.map(server => (
                                                 <SelectItem key={server} value={server}>{server}</SelectItem>
-                                            ))}\
+                                            ))}
                                         </SelectContent>
                                     </Select>
                                 </div>
